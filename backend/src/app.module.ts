@@ -8,26 +8,33 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { RequestLoggerMiddleware } from './infra/logging/request-logger.middleware';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { typeOrmAsyncOptions } from './infra/database/typeorm.config';
+import { UsersModule } from './modules/users/users.module';
+import { PostsModule } from './modules/posts/posts.module';
+import { CommentsModule } from './modules/comments/comments.module';
+import { LikesModule } from './modules/likes/likes.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      validate: (raw) =>
-        validateEnv({
-          APP_NAME: raw.APP_NAME ?? 'basic-board',
-          NODE_ENV: raw.NODE_ENV ?? 'development',
-          PORT: raw.PORT ?? '3000',
-          DB_HOST: raw.DB_HOST ?? '127.0.0.1',
-          DB_PORT: raw.DB_PORT ?? '3307',
-          DB_USERNAME: raw.DB_USERNAME ?? 'root',
-          DB_PASSWORD: raw.DB_PASSWORD ?? '',
-          DB_DATABASE: raw.DB_DATABASE ?? 'basic_board',
-        }),
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        type: 'mysql',
+        host: process.env.DB_HOST ?? '127.0.0.1',
+        port: Number(process.env.DB_PORT ?? '3307'),
+        username: process.env.DB_USERNAME ?? 'root',
+        password: process.env.DB_PASSWORD ?? '',
+        database: process.env.DB_DATABASE ?? 'basic_board',
+        synchronize: false,
+        autoLoadEntities: true,
+        logging: false,
+        charset: 'utf8mb4',
+      }),
     }),
-    TypeOrmModule.forRootAsync(typeOrmAsyncOptions), // 🔹 DB 연결
     HealthModule,
+    UsersModule,
+    PostsModule,
+    CommentsModule,
+    LikesModule, // 이거 어떻게 각 모듈에 추가만해줬는데 여기에 자동으로 추가되는지 알아봐
   ],
   controllers: [],
   // 아래는 Nest의 DI 컨테이너가 자동으로 전역 등록하게 하는 공식 방식이다.
