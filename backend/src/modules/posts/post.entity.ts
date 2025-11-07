@@ -6,10 +6,13 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../users/user.entity';
+import { Comment } from '../comments/comment.entity';
+import { Like } from '../likes/like.entity';
 
 @Entity('posts')
 @Index('idx_posts_author_createdAt', ['authorId', 'createdAt'])
@@ -47,4 +50,11 @@ export class Post {
 
   @DeleteDateColumn({ type: 'datetime', nullable: true })
   deletedAt?: Date | null;
+
+  // 역참고
+  @OneToMany(() => Comment, (comment) => comment.post)
+  comments!: Comment[];
+
+  @OneToMany(() => Like, (like) => like.post)
+  likes!: Like[];
 }
