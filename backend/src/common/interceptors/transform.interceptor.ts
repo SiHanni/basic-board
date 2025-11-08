@@ -7,9 +7,9 @@ import {
 import { map } from 'rxjs/operators';
 import { ConfigService } from '@nestjs/config';
 
-interface SuccessBody<T = unknown> {
+interface SuccessBody {
   success: true;
-  data: T;
+  data: unknown;
   meta: {
     timestamp: string;
     path: string;
@@ -35,6 +35,11 @@ export class TransformInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       map((data) => {
+        // 이미 포맷이 있으면 그대로 통과 (이중 포장 방지)
+        if (data && typeof data === 'object' && 'success' in data) {
+          return data;
+        }
+
         const endNs = process.hrtime.bigint();
         const latencyMs = Number(endNs - startNs) / 1_000_000;
 

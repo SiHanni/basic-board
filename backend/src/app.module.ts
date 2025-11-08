@@ -34,7 +34,7 @@ import { LikesModule } from './modules/likes/likes.module';
     UsersModule,
     PostsModule,
     CommentsModule,
-    LikesModule, // 이거 어떻게 각 모듈에 추가만해줬는데 여기에 자동으로 추가되는지 알아봐
+    LikesModule,
   ],
   controllers: [],
   // 아래는 Nest의 DI 컨테이너가 자동으로 전역 등록하게 하는 공식 방식이다.
