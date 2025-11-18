@@ -76,7 +76,7 @@ describe('Users (e2e)', () => {
     const payload = {
       name: 'Dup User',
       email: 'dup@example.com',
-      password: 'Str0ngP@ss1',
+      password: 'Str0ngP@ssw0rd',
     };
 
     // 선행 생성

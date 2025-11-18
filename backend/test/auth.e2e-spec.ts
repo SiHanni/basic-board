@@ -44,7 +44,7 @@ describe('Auth (e2e) - 세션/쿠키 로그인', () => {
     const signupPayload = {
       name: 'Login User',
       email: 'login@example.com',
-      password: 'Str0ngP@ss1',
+      password: 'Str0ngP@ssw0rd',
     };
 
     await request(app.getHttpServer())
@@ -98,7 +98,7 @@ describe('Auth (e2e) - 세션/쿠키 로그인', () => {
     const signupPayload = {
       name: 'Wrong Password User',
       email: 'wrongpass@example.com',
-      password: 'Str0ngP@ss1',
+      password: 'Str0ngP@ssw0rd',
     };
 
     // 유저 선행 생성

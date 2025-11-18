@@ -10,7 +10,7 @@ export class LoginDto {
   email!: string;
 
   @ApiProperty({
-    example: 'Str0ngP@ss1',
+    example: 'Str0ngP@ssw0rd',
     description: '로그인 비밀번호(8자 이상)',
   })
   @IsString()

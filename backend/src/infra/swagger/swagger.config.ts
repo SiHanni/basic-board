@@ -15,7 +15,7 @@ export function setupSwagger(app: INestApplication) {
     .build();
 
   const doc = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/api-docs', app, doc, {
+  SwaggerModule.setup('/docs', app, doc, {
     swaggerOptions: { persistAuthorization: true },
   });
 }
