@@ -7,7 +7,11 @@ export function setupSwagger(app: INestApplication) {
     .setTitle('Basic Board API')
     .setDescription('NestJS 게시판 API 문서')
     .setVersion('0.1.0')
-    .addBearerAuth()
+    .addCookieAuth('sid', {
+      type: 'apiKey',
+      in: 'cookie',
+      name: 'sid',
+    })
     .build();
 
   const doc = SwaggerModule.createDocument(app, config);

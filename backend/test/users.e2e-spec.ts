@@ -111,4 +111,57 @@ describe('Users (e2e)', () => {
     expect(res.body.success).toBe(false);
     expect(res.body.error.code).toBe('VALIDATION_FAILED');
   });
+
+  it('GET /users/me - 비로그인 접근 시 401', async () => {
+    const res = await request(app.getHttpServer()).get('/users/me').expect(401); // HTTP status 자체를 supertest가 검증
+
+    expect(res.body.success).toBe(false);
+    expect(res.body.error).toBeDefined();
+    // 여기서 statusCode는 강제로 보지 말고,
+    // 우리가 실제로 넣은 필드(code, message)를 확인하는 쪽이 맞음
+    expect(res.body.error.code).toBeDefined();
+    expect(res.body.error.message).toBeDefined();
+  });
+
+  it('GET /users/me - 로그인 후 내 정보 조회 성공', async () => {
+    // 1) 회원가입
+    const signup = await request(app.getHttpServer())
+      .post('/users')
+      .send({
+        name: 'me',
+        email: 'me@example.com',
+        password: 'Password123!',
+      })
+      .expect(201);
+
+    // 2) 로그인 → sid 쿠키 획득
+    const login = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({
+        email: 'me@example.com',
+        password: 'Password123!',
+      })
+      .expect(200);
+
+    const setCookieHeader = login.header['set-cookie'];
+    expect(setCookieHeader).toBeDefined();
+
+    // string | string[] 를 강제로 배열로 맞추기
+    const cookies = Array.isArray(setCookieHeader)
+      ? setCookieHeader
+      : [setCookieHeader];
+
+    const sidCookie = cookies.find((c) => c.startsWith('sid='));
+    expect(sidCookie).toBeDefined();
+
+    // 3) sid 쿠키로 내 정보 조회
+    const meRes = await request(app.getHttpServer())
+      .get('/users/me')
+      .set('Cookie', sidCookie)
+      .expect(200);
+
+    expect(meRes.body.success).toBe(true);
+    expect(meRes.body.data).toBeDefined();
+    expect(meRes.body.data.email).toBe('me@example.com');
+  });
 });

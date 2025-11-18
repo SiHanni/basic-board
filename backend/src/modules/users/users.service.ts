@@ -29,7 +29,7 @@ export class UsersService {
 
     // 2. 비밀번호 해시 (라운드 기본 12, 환경변수로 조절 가능)
     const saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS ?? '12');
-    const passwordHash = await bcrypt.hash(password, saltRounds); // bcrypt 알고리즘 공부와 암호화, 그리고 왜 이걸 썻는지
+    const passwordHash = await bcrypt.hash(password, saltRounds);
 
     const user = this.userRepository.create({
       name: name,

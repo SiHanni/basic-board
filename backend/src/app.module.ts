@@ -1,6 +1,5 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { validateEnv } from './infra/config/env.validation';
 import { HealthModule } from './modules/health/health.module';
 import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
@@ -12,6 +11,7 @@ import { UsersModule } from './modules/users/users.module';
 import { PostsModule } from './modules/posts/posts.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { LikesModule } from './modules/likes/likes.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -35,6 +35,7 @@ import { LikesModule } from './modules/likes/likes.module';
     PostsModule,
     CommentsModule,
     LikesModule,
+    AuthModule,
   ],
   controllers: [],
   // 아래는 Nest의 DI 컨테이너가 자동으로 전역 등록하게 하는 공식 방식이다.
