@@ -13,3 +13,5 @@ import { SessionModule } from '../../infra/session/session.module';
   exports: [TypeOrmModule, UsersService],
 })
 export class UsersModule {}
+
+// UsersModule import했다고 해서 SessionAuthGuard까지 자동으로 따라오는 건 아니다.
