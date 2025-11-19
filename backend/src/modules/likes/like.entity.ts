@@ -4,14 +4,16 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
-  Index,
   CreateDateColumn,
+  DeleteDateColumn,
+  Index,
 } from 'typeorm';
+
 import { User } from '../users/user.entity';
 import { Post } from '../posts/post.entity';
 
 @Entity('likes')
-@Index('uq_likes_user_post', ['userId', 'postId'], { unique: true }) // 중복 방지
+@Index('uq_likes_user_post', ['userId', 'postId'], { unique: true })
 export class Like {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
@@ -32,4 +34,7 @@ export class Like {
 
   @CreateDateColumn({ type: 'datetime' })
   createdAt!: Date;
+
+  @DeleteDateColumn({ type: 'datetime', nullable: true })
+  deletedAt?: Date | null;
 }
