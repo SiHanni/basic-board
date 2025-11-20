@@ -6,9 +6,10 @@ import { PostsService } from './posts.service';
 import { PostsController } from './posts.controller';
 import { SessionModule } from '../../infra/session/session.module';
 import { User } from '../users/user.entity';
+import { PostLike } from '../likes/post-likes/post-like.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post, User]), SessionModule],
+  imports: [TypeOrmModule.forFeature([Post, User, PostLike]), SessionModule],
   controllers: [PostsController],
   providers: [PostsService],
   exports: [PostsService],

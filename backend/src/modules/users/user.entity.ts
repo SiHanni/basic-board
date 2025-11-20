@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Post } from '../posts/post.entity';
 import { Comment } from '../comments/comment.entity';
-import { Like } from '../likes/like.entity';
+import { PostLike } from '../likes/post-likes/post-like.entity';
 
 @Entity('users')
 @Index('idx_users_email_unique', ['email'], { unique: true }) // index 공부, index 개념, index 설정과 튜닝, 등 5-why
@@ -49,6 +49,6 @@ export class User {
   @OneToMany(() => Comment, (comment) => comment.author)
   comments!: Comment[];
 
-  @OneToMany(() => Like, (like) => like.user)
-  likes!: Like[];
+  @OneToMany(() => PostLike, (postLike) => postLike.post)
+  postLikes!: PostLike[];
 }

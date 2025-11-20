@@ -4,10 +4,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Like, Repository } from 'typeorm';
+import { IsNull, Like as TypeOrmLike, Repository } from 'typeorm';
 
 import { Post } from './post.entity';
-import { User } from '../users/user.entity';
+import { PostLike } from '../likes/post-likes/post-like.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { ListPostsQueryDto } from './dto/list-posts.query.dto';
@@ -17,6 +17,8 @@ export class PostsService {
   constructor(
     @InjectRepository(Post)
     private readonly postsRepository: Repository<Post>,
+    @InjectRepository(PostLike)
+    private readonly postLikesRepository: Repository<PostLike>,
   ) {}
 
   async create(authorId: string, dto: CreatePostDto): Promise<Post> {
@@ -92,8 +94,8 @@ export class PostsService {
       // 제목 OR 내용에 검색어가 포함된 글만
       [items, total] = await this.postsRepository.findAndCount({
         where: [
-          { ...baseWhere, title: Like(likePattern) },
-          { ...baseWhere, content: Like(likePattern) },
+          { ...baseWhere, title: TypeOrmLike(likePattern) },
+          { ...baseWhere, content: TypeOrmLike(likePattern) },
         ],
         order: { createdAt: 'DESC' },
         skip: (page - 1) * limit,
@@ -163,5 +165,43 @@ export class PostsService {
     //await this.postsRepository.softDelete(id);
     // soft delete (DeleteDateColumn 사용)
     await this.postsRepository.softRemove(post);
+  }
+
+  /**
+   * 단건 조회 + 조회수 1 증가 + (선택) 로그인 유저의 좋아요/싫어요 상태
+   */
+  async getDetailWithLikeStatus(
+    id: string,
+    currentUserId: string | null,
+  ): Promise<{
+    post: Post;
+    userLiked: boolean;
+    userDisliked: boolean;
+  }> {
+    // 도련님이 이미 만든 조회수 증가 로직 재사용
+    const post = await this.getAndIncreaseViewCount(id);
+
+    let userLiked = false;
+    let userDisliked = false;
+
+    if (currentUserId) {
+      const postLike = await this.postLikesRepository.findOne({
+        where: {
+          postId: id,
+          userId: currentUserId,
+        },
+      });
+
+      if (postLike) {
+        if (postLike.type === 'LIKE') {
+          userLiked = true;
+        }
+        if (postLike.type === 'DISLIKE') {
+          userDisliked = true;
+        }
+      }
+    }
+
+    return { post, userLiked, userDisliked };
   }
 }

@@ -54,6 +54,12 @@ export class Comment {
   @Column({ type: 'text' })
   content!: string;
 
+  @Column({ type: 'int', unsigned: true, default: 0 })
+  likeCount!: number;
+
+  @Column({ type: 'int', unsigned: true, default: 0 })
+  dislikeCount!: number;
+
   @CreateDateColumn({ type: 'datetime' })
   createdAt!: Date;
 

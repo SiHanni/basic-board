@@ -5,16 +5,17 @@ import {
   ManyToOne,
   JoinColumn,
   CreateDateColumn,
-  DeleteDateColumn,
   Index,
 } from 'typeorm';
 
-import { User } from '../users/user.entity';
-import { Post } from '../posts/post.entity';
+import { User } from '../../users/user.entity';
+import { Post } from '../../posts/post.entity';
 
-@Entity('likes')
-@Index('uq_likes_user_post', ['userId', 'postId'], { unique: true })
-export class Like {
+export type PostReactionType = 'LIKE' | 'DISLIKE';
+
+@Entity('post_likes')
+@Index('uq_post_likes_user_post', ['userId', 'postId'], { unique: true })
+export class PostLike {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
@@ -32,9 +33,12 @@ export class Like {
   @JoinColumn({ name: 'postId' })
   post!: Post;
 
+  @Column({
+    type: 'varchar',
+    length: 10,
+  })
+  reaction!: PostReactionType; // 'LIKE' | 'DISLIKE'
+
   @CreateDateColumn({ type: 'datetime' })
   createdAt!: Date;
-
-  @DeleteDateColumn({ type: 'datetime', nullable: true })
-  deletedAt?: Date | null;
 }

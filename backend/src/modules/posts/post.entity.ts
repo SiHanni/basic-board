@@ -12,7 +12,7 @@ import {
 } from 'typeorm';
 import { User } from '../users/user.entity';
 import { Comment } from '../comments/comment.entity';
-import { Like } from '../likes/like.entity';
+import { PostLike } from '../likes/post-likes/post-like.entity';
 
 @Entity('posts')
 @Index('idx_posts_author_createdAt', ['authorId', 'createdAt'])
@@ -42,6 +42,9 @@ export class Post {
   @Column({ type: 'int', unsigned: true, default: 0 })
   likeCount!: number;
 
+  @Column({ type: 'int', unsigned: true, default: 0 })
+  dislikeCount!: number;
+
   @CreateDateColumn({ type: 'datetime' })
   createdAt!: Date;
 
@@ -55,6 +58,6 @@ export class Post {
   @OneToMany(() => Comment, (comment) => comment.post)
   comments!: Comment[];
 
-  @OneToMany(() => Like, (like) => like.post)
-  likes!: Like[];
+  @OneToMany(() => PostLike, (postLike) => postLike.post)
+  postLikes!: PostLike[];
 }

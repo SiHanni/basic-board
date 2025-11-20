@@ -1,18 +1,17 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { Like } from './like.entity';
-import { Post } from '../posts/post.entity';
-import { User } from '../users/user.entity';
-
-import { LikesService } from './likes.service';
-import { LikesController } from './likes.controller';
-
-import { SessionModule } from '../../infra/session/session.module';
+import { PostLikesModule } from './post-likes/post-likes.module';
+//import { ReplyLikesModule } from './reply-likes/reply-likes.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Like, Post, User]), SessionModule],
-  providers: [LikesService],
-  controllers: [LikesController],
+  imports: [
+    PostLikesModule,
+    //ReplyLikesModule,
+  ],
+  // 필요하면 여기서 공통 서비스/가드 등을 providers에 두고 export 할 수도 있음
+  exports: [
+    PostLikesModule,
+    //ReplyLikesModule,
+  ],
 })
 export class LikesModule {}
