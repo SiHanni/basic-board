@@ -27,6 +27,18 @@ export class CommentResponseDto {
   })
   content!: string;
 
+  @ApiProperty({
+    description: '좋아요 수',
+    example: 0,
+  })
+  likeCount!: number;
+
+  @ApiProperty({
+    description: '싫어요 수',
+    example: 0,
+  })
+  dislikeCount!: number;
+
   @ApiProperty()
   createdAt!: string;
 

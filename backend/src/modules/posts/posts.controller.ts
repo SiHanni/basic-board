@@ -70,26 +70,17 @@ export class PostsController {
   }
 
   /**
-   * 게시글 상세 조회 + 조회수 1 증가 + (로그인 유저의 좋아요/싫어요 상태)
-   *
-   * - 로그인 유저가 아니라면 userLiked/userDisliked는 false로 내려감
-   * - 로그인 유저라면 현재 해당 게시글에 대해
-   *   LIKE / DISLIKE 중 무엇을 눌렀는지 반영됨
+   * 게시글 상세 조회 + 조회수 1 증가
    */
-  @UseGuards(SessionAuthGuard)
   @Get(':id')
   @ApiOperation({
     summary: '게시글 상세 조회 (조회수 증가 + 좋아요/싫어요 상태 포함)',
   })
   @ApiOkResponse({ type: PostResponseDto })
-  async getPost(
-    @Param('id') id: string,
-    @CurrentUser() currentUser: User,
-  ): Promise<PostResponseDto> {
-    const { post, userLiked, userDisliked } =
-      await this.postsService.getDetailWithLikeStatus(id, currentUser.id);
+  async getPost(@Param('id') id: string): Promise<PostResponseDto> {
+    const { post } = await this.postsService.getDetail(id);
 
-    return this.toPostResponseDto(post, userLiked, userDisliked);
+    return this.toPostResponseDto(post);
   }
 
   /**
@@ -135,11 +126,7 @@ export class PostsController {
    * - 목록에서는 userLiked/userDisliked 정보가 없으므로 기본값 false
    * - 상세 조회에서는 서비스에서 계산한 값을 넘겨줌
    */
-  private toPostResponseDto(
-    post: PostEntity,
-    userLiked = false,
-    userDisliked = false,
-  ): PostResponseDto {
+  private toPostResponseDto(post: PostEntity): PostResponseDto {
     return {
       id: post.id,
       authorId: post.authorId,
@@ -148,8 +135,6 @@ export class PostsController {
       viewCount: post.viewCount,
       likeCount: post.likeCount,
       dislikeCount: post.dislikeCount,
-      userLiked,
-      userDisliked,
       createdAt: post.createdAt.toISOString(),
       updatedAt: post.updatedAt.toISOString(),
     };

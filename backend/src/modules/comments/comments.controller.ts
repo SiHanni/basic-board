@@ -116,6 +116,8 @@ export class CommentsController {
       depth: comment.depth,
       parentId: comment.parentId ?? null,
       content: comment.content,
+      likeCount: comment.likeCount,
+      dislikeCount: comment.dislikeCount,
       createdAt: comment.createdAt.toISOString(),
       updatedAt: comment.updatedAt.toISOString(),
     };

@@ -168,40 +168,14 @@ export class PostsService {
   }
 
   /**
-   * 단건 조회 + 조회수 1 증가 + (선택) 로그인 유저의 좋아요/싫어요 상태
+   * 단건 조회 + 조회수 1 증가
    */
-  async getDetailWithLikeStatus(
-    id: string,
-    currentUserId: string | null,
-  ): Promise<{
+  async getDetail(id: string): Promise<{
     post: Post;
-    userLiked: boolean;
-    userDisliked: boolean;
   }> {
     // 도련님이 이미 만든 조회수 증가 로직 재사용
     const post = await this.getAndIncreaseViewCount(id);
 
-    let userLiked = false;
-    let userDisliked = false;
-
-    if (currentUserId) {
-      const postLike = await this.postLikesRepository.findOne({
-        where: {
-          postId: id,
-          userId: currentUserId,
-        },
-      });
-
-      if (postLike) {
-        if (postLike.type === 'LIKE') {
-          userLiked = true;
-        }
-        if (postLike.type === 'DISLIKE') {
-          userDisliked = true;
-        }
-      }
-    }
-
-    return { post, userLiked, userDisliked };
+    return { post };
   }
 }
